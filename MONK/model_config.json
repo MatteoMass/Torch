@@ -1,0 +1,27 @@
+{
+    "seed": 42,
+    "input_dim": 17,
+    "output_dim": 1,
+    "random_seed": 42,
+    "no_fold": 4,
+    "loss_function": "MSELoss",
+    "optimizer": "SGD",
+    "batch_size": 16,
+    "monk":"3",
+
+    "enable_kfold": 0,
+    "enable_grid_search": 1,
+    "enable_per_epoch_test": 1,
+
+
+    "validation_fraction": 0.1,
+
+    "configurazione_rete_finale": [4, 0, 400, 0.1, 0.7],
+    "grid_search":{
+        "epochs": [100,200, 400],
+        "learning_rate": [0.5, 0.1, 0.01],
+        "first_hidden_layer": [4,3,2],
+        "second_hidden_layer": [2, 0],
+        "momentum": [0.7, 0.3, 0]
+    }
+}
