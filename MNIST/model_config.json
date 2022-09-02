@@ -1,0 +1,30 @@
+{
+    "seed": 42,
+    "input_dim": [28,28],
+    "output_dim": 10,
+    "input_channels": 1,
+
+    "no_fold": 4,
+    "loss_function": "MSELoss",
+    "optimizer": "SGD",
+    "batch_size": 512,
+
+    "enable_kfold": 0,
+    "enable_grid_search": 0,
+    "enable_per_epoch_test": 1,
+
+
+    "validation_fraction": 0.1,
+
+    "configurazione_rete_finale": [3, 32, 100 , 10, 0.1],
+
+    "grid_search":{
+        "epochs": [100],
+        "learning_rate": [0.5],
+        "first_kernel_size": [3],
+        "first_out_channels": [3],
+        "second_kernel_size": [3],
+        "second_out_channels": [3]
+        
+    }
+}

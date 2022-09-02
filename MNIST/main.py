@@ -8,9 +8,10 @@ from utils import load_config, configurazione_migliore,  DICT_LOSS, DICT_OPTIMIZ
 from dataset_wrapper import DatasetWrapper
 from model import Model
 from grid_search import gridSearch
-
+from tqdm import tqdm
 
 config = load_config()
+
 
 
 random.seed(config['seed'])
@@ -18,10 +19,8 @@ torch.manual_seed(config['seed'])
 
 #data loading
 print("Data Loading...")
-training_dataset = DatasetWrapper("dataset/monks-"+config['monk']+".train")
-test_dataset = DatasetWrapper("dataset/monks-"+config['monk']+".test")
-
-
+training_dataset = DatasetWrapper(training=True)
+test_dataset = DatasetWrapper(training=False)
 
 #grid search phase
 if(config['enable_grid_search']):
@@ -31,12 +30,14 @@ if(config['enable_grid_search']):
 
     config['configurazione_rete_finale'] = configurazione_migliore(res_gridsearch)
 
+
+
 #training phase
 best_model_parameters = config['configurazione_rete_finale']
 
-best_model = Model(config['input_dim'], best_model_parameters[0], best_model_parameters[1], config["output_dim"])
+best_model = Model(config['input_channels'], best_model_parameters[0], best_model_parameters[1], best_model_parameters[2], config["output_dim"])
 loss_function = DICT_LOSS[config["loss_function"]]()
-optimizer = DICT_OPTIMIZER[config["optimizer"]](best_model.parameters(), lr=best_model_parameters[3], momentum= best_model_parameters[4])
+optimizer = DICT_OPTIMIZER[config["optimizer"]](best_model.parameters(), lr=best_model_parameters[4])
 
 #training loop
 print("Trainig Loop...")
@@ -50,15 +51,15 @@ if config['enable_per_epoch_test']:
 dl_training =  DataLoader(training_dataset, batch_size=config['batch_size'])
 dl_test =  DataLoader(test_dataset, batch_size=config['batch_size'])
 
-for epoch in range(best_model_parameters[2]):
+for epoch in tqdm(range(best_model_parameters[3])):
 
     epoch_acc_training = 0.0
     epoch_error_training = 0.0
 
     for x,y in dl_training:
+
         y_pred = best_model(x)
         loss_value = loss_function(y_pred, y)
-
         epoch_error_training += loss_value.item()
         epoch_acc_training += compute_accuracy(y_pred, y)
 
@@ -81,6 +82,7 @@ for epoch in range(best_model_parameters[2]):
         epoch_error_test = 0.0
 
         for x,y in dl_test:
+
             y_pred = best_model(x)
             loss_value = loss_function(y_pred, y)
 
@@ -115,7 +117,3 @@ if config['enable_per_epoch_test']:
     ax2[0].plot(test_acc)
     ax2[1].plot(test_error)
     plt.show()
-
-
-
-
